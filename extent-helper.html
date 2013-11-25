@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+<!--borrow heavily from http://johngravois.com/maps/center-zoom-helper.html-->
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -81,17 +81,17 @@
 		
 		var s = "";
         s = "<b>Web Mercator</b>" + "<br>"
-		   +"XMin: " + extent.xmin + "<br>"
+		   +"XMin: " + extent.xmin + ",<br>"
 		    //"XMin: " + dojo.number.format(extent.xmin, {places : 2}) + "<br>"
-           +"YMin: " + extent.ymin + "<br>"
-           +"XMax: " + extent.xmax + "<br>"
+           +"YMin: " + extent.ymin + ",<br>"
+           +"XMax: " + extent.xmax + ",<br>"
            +"YMax: " + extent.ymax + "<br>"
 		   
 		   +"<br><b>Geographic Coordinate</b>" + "<br>"
 		   +"Center:  " + dojo.number.format(point4326.x, {places : 4}) + ", " + dojo.number.format(point4326.y, {places : 4})+ "<br>"
-		   +"XMin:   " + dojo.number.format(pointed4326.xmin, {places : 4}) + "<br>"
-           +"YMin:   " + dojo.number.format(pointed4326.ymin, {places : 4}) + "<br>"
-           +"XMax: " + dojo.number.format(pointed4326.xmax, {places : 4}) + "<br>"
+		   +"XMin:   " + dojo.number.format(pointed4326.xmin, {places : 4}) + ",<br>"
+           +"YMin:   " + dojo.number.format(pointed4326.ymin, {places : 4}) + ",<br>"
+           +"XMax: " + dojo.number.format(pointed4326.xmax, {places : 4}) + ",<br>"
            +"YMax:   " + dojo.number.format(pointed4326.ymax, {places : 4}) + "<br>"
 		   
         dojo.byId("center").innerHTML = s;
