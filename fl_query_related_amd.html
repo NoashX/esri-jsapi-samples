@@ -58,6 +58,7 @@
         "esri/layers/ImageParameters",
         "dojo/on", 
         "esri/geometry/Extent",
+        "dojo/_base/array",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/InfoTemplate",
         "dijit/layout/BorderContainer", 
@@ -77,6 +78,7 @@
         ImageParameters,
         On, 
         Extent,
+        array,
         SimpleMarkerSymbol,
         InfoTemplate
       ) {
@@ -117,7 +119,7 @@
                 return;
               }
               var fset = relatedRecords[features[0].attributes.OBJECTID];
-              var items = dojo.map(fset.features, function(feature) {
+              var items = array.map(fset.features, function(feature) {
                 return feature.attributes;
               });
               //Create data object to be used in store
@@ -150,18 +152,18 @@
   </head> 
   <body class="tundra"> 
     <!--TOPMOST LAYOUT CONTAINER--> 
-    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width:100%; height:100%;"> 
+    <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width:100%; height:100%;"> 
       <!--HEADER SECTION--> 
-      <div id="header" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height:75px;"> 
+      <div id="header" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:75px;"> 
         Click on a well to select the well and select the related well log information for that well.
       </div> 
       <!--CENTER SECTION--> 
       <!--CENTER CONTAINER--> 
-      <div id="mapDiv" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'" style="margin:5px;"> 
+      <div id="mapDiv" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'" style="margin:5px;"> 
       </div> 
       <!--RIGHT CONTAINER--> 
-      <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" style="width:400px;margin:5px;background-color:whitesmoke;"> 
-        <table data-dojo-type="dojox.grid.DataGrid" jsid="grid" id="grid" data-dojo-props="rowsPerPage:'5', rowSelector:'20px'" style="height:300px; width:200px"> 
+      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'" style="width:400px;margin:5px;background-color:whitesmoke;"> 
+        <table data-dojo-type="dojox/grid/DataGrid" jsid="grid" id="grid" data-dojo-props="rowsPerPage:'5', rowSelector:'20px'" style="height:300px; width:200px"> 
           <thead> 
             <tr> 
               <th field="OBJECTID">ID</th> 
