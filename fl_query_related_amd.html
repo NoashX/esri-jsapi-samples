@@ -3,7 +3,7 @@
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
-    <title></title> 
+    <title>Query RelatedRecords Example</title> 
 
     <link rel="stylesheet" href="http://js.arcgis.com/3.9/js/dojo/dijit/themes/tundra/tundra.css"> 
     <link rel="stylesheet" href="http://js.arcgis.com/3.9/js/dojo/dojox/grid/resources/Grid.css"> 
@@ -47,24 +47,36 @@
     
       require([
         "esri/map", 
-        "esri/layers/FeatureLayer", "esri/layers/ArcGISDynamicMapServiceLayer",
-        "esri/tasks/query", "esri/tasks/QueryTask", "esri/tasks/RelationshipQuery",
+        "esri/layers/FeatureLayer", 
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/tasks/query", 
+        "esri/tasks/QueryTask", 
+        "esri/tasks/RelationshipQuery",
         "esri/toolbars/draw",
-        "dojox/grid/DataGrid", "dojo/data/ItemFileReadStore",
+        "dojox/grid/DataGrid", 
+        "dojo/data/ItemFileReadStore",
         "esri/layers/ImageParameters",
-        "dojo/on", "esri/geometry/Extent",
+        "dojo/on", 
+        "esri/geometry/Extent",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/InfoTemplate",
-        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+        "dijit/layout/BorderContainer", 
+        "dijit/layout/ContentPane", 
+        "dojo/domReady!"
 
       ], function(
         Map, 
-        FeatureLayer, DynamicMapServiceLayer,
-        Query, QueryTask, RelationshipQuery,
+        FeatureLayer, 
+        DynamicMapServiceLayer,
+        Query, 
+        QueryTask, 
+        RelationshipQuery,
         Draw,
-        DataGrid, ItemFileReadStore,
+        DataGrid, 
+        ItemFileReadStore,
         ImageParameters,
-        On, Extent,
+        On, 
+        Extent,
         SimpleMarkerSymbol,
         InfoTemplate
       ) {
@@ -87,65 +99,53 @@
           infoTemplate: new InfoTemplate("Well: ${API_WELL_N}","${*}")
         });
         wellFeatureLayer.setSelectionSymbol(selectionSymbol);
- 
-        //old - returns array of objects
-        //dojo.connect(wellFeatureLayer, "onSelectionComplete", findRelatedRecords); 
-        
         wellFeatureLayer.on("selection-complete", findRelatedRecords); 
-        
         map.addLayer(wellFeatureLayer);
- 
-        //old - connect style event
-        //dojo.connect(map, "onClick", findWells); //old style of events
+
         map.on("click", findWells);
       
+        function findRelatedRecords(evt) {
+            features = evt.features;
+            var relatedTopsQuery = new RelationshipQuery();
+            relatedTopsQuery.outFields = ["*"];
+            relatedTopsQuery.relationshipId = 3;
+            relatedTopsQuery.objectIds = [features[0].attributes.OBJECTID];
+            wellFeatureLayer.queryRelatedFeatures(relatedTopsQuery, function(relatedRecords) {
+              console.log("related recs: ", relatedRecords);
+              if ( ! relatedRecords.hasOwnProperty(features[0].attributes.OBJECTID) ) {
+                console.log("No related records for ObjectID: ", features[0].attributes.OBJECTID);
+                return;
+              }
+              var fset = relatedRecords[features[0].attributes.OBJECTID];
+              var items = dojo.map(fset.features, function(feature) {
+                return feature.attributes;
+              });
+              //Create data object to be used in store
+              var data = {
+                identifier: "OBJECTID",  //This field needs to have unique values
+                label: "OBJECTID", //Name field for display. Not pertinent to a grid but may be used elsewhere.
+                items: items
+              };
+     
+              //Create data store and bind to grid.
+              store = new ItemFileReadStore({ data:data });
+              grid.setStore(store);
+              grid.setQuery({ OBJECTID: '*' });
+            });
+        }
  
-      //function findRelatedRecords(features) {
-      function findRelatedRecords(evt) {
-        var relatedTopsQuery = new RelationshipQuery();
-        relatedTopsQuery.outFields = ["*"];
-        relatedTopsQuery.relationshipId = 3;
-        
-        features = evt.features;
-        
-        console.log(features);
-        relatedTopsQuery.objectIds = [features[0].attributes.OBJECTID];
-        wellFeatureLayer.queryRelatedFeatures(relatedTopsQuery, function(relatedRecords) {
-          console.log("related recs: ", relatedRecords);
-          if ( ! relatedRecords.hasOwnProperty(features[0].attributes.OBJECTID) ) {
-            console.log("No related records for ObjectID: ", features[0].attributes.OBJECTID);
-            return;
-          }
-          var fset = relatedRecords[features[0].attributes.OBJECTID];
-          var items = dojo.map(fset.features, function(feature) {
-            return feature.attributes;
-          });
-          //Create data object to be used in store
-          var data = {
-            identifier: "OBJECTID",  //This field needs to have unique values
-            label: "OBJECTID", //Name field for display. Not pertinent to a grid but may be used elsewhere.
-            items: items
-          };
- 
-          //Create data store and bind to grid.
-          store = new ItemFileReadStore({ data:data });
-          grid.setStore(store);
-          grid.setQuery({ OBJECTID: '*' });
-        });
-      }
- 
-      function findWells(evt) {
-        grid.setStore(null);
-        var selectionQuery = new Query();
-        var tol = map.extent.getWidth()/map.width * 5;
-        var x = evt.mapPoint.x;
-        var y = evt.mapPoint.y;
-        var queryExtent = new Extent(x-tol,y-tol,x+tol,y+tol,evt.mapPoint.spatialReference);
-        selectionQuery.geometry = queryExtent;
-        wellFeatureLayer.selectFeatures(selectionQuery,FeatureLayer.SELECTION_NEW);
-      }
- 
+        function findWells(evt) {
+            grid.setStore(null);
+            var selectionQuery = new Query();
+            var tol = map.extent.getWidth()/map.width * 5;
+            var x = evt.mapPoint.x;
+            var y = evt.mapPoint.y;
+            var queryExtent = new Extent(x-tol,y-tol,x+tol,y+tol,evt.mapPoint.spatialReference);
+            selectionQuery.geometry = queryExtent;
+            wellFeatureLayer.selectFeatures(selectionQuery,FeatureLayer.SELECTION_NEW);
+        }
     });
+    
     </script> 
   </head> 
   <body class="tundra"> 
