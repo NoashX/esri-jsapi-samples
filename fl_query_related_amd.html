@@ -88,14 +88,14 @@
         });
         wellFeatureLayer.setSelectionSymbol(selectionSymbol);
  
-        // old - returns array of objects
+        //old - returns array of objects
         //dojo.connect(wellFeatureLayer, "onSelectionComplete", findRelatedRecords); 
         
-        // new - returns object, with a parameter that is an array of objects
         wellFeatureLayer.on("selection-complete", findRelatedRecords); 
         
         map.addLayer(wellFeatureLayer);
  
+        //old - connect style event
         //dojo.connect(map, "onClick", findWells); //old style of events
         map.on("click", findWells);
       
