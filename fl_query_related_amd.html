@@ -41,9 +41,9 @@
 
     <script>dojoConfig = { parseOnLoad:true };</script> 
     <script src="http://js.arcgis.com/3.9/"></script> 
-    <script language="Javascript"> 
+    <script> 
     
-    var map, wellFeatureLayer, toolbar, grid, store;
+    var map, wellFeatureLayer, grid, store;
     
       require([
         "esri/map", 
@@ -107,7 +107,7 @@
         map.on("click", findWells);
       
         function findRelatedRecords(evt) {
-            features = evt.features;
+            var features = evt.features;
             var relatedTopsQuery = new RelationshipQuery();
             relatedTopsQuery.outFields = ["*"];
             relatedTopsQuery.relationshipId = 3;
